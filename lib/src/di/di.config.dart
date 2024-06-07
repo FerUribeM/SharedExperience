@@ -12,8 +12,16 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
-import '../core/services/demo_service.dart' as _i4;
-import '../provider/home_provider.dart' as _i3;
+import '../core/services/demo_service.dart' as _i12;
+import '../data/datasource/firebase_repository.dart' as _i3;
+import '../data/datasource/interfaces/ilogin_datasources.dart' as _i5;
+import '../data/datasource/login_datasource_imp.dart' as _i6;
+import '../data/repositories/interface/ilogin_repository.dart' as _i7;
+import '../data/repositories/login_repository_imp.dart' as _i8;
+import '../domain/interfaces/ilogin_usecase.dart' as _i9;
+import '../domain/usecases/login_usecase.dart' as _i10;
+import '../pages/login/login_provider.dart' as _i11;
+import '../provider/home_provider.dart' as _i4;
 
 extension GetItInjectableX on _i1.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -26,8 +34,17 @@ extension GetItInjectableX on _i1.GetIt {
       environment,
       environmentFilter,
     );
-    gh.factory<_i3.HomeProvider>(() => _i3.HomeProvider());
-    gh.factory<_i4.ServiceA>(() => _i4.ServiceA());
+    gh.lazySingleton<_i3.FirebaseRepository>(() => _i3.FirebaseRepository());
+    gh.factory<_i4.HomeProvider>(() => _i4.HomeProvider());
+    gh.factory<_i5.ILoginDataSource>(
+        () => _i6.LoginDataSourceImp(gh<_i3.FirebaseRepository>()));
+    gh.factory<_i7.ILoginRepository>(
+        () => _i8.LoginRepositoryImp(gh<_i5.ILoginDataSource>()));
+    gh.lazySingleton<_i9.ILoginUseCase>(
+        () => _i10.LoginUsecase(gh<_i7.ILoginRepository>()));
+    gh.factory<_i11.LoginProvider>(
+        () => _i11.LoginProvider(gh<_i9.ILoginUseCase>()));
+    gh.factory<_i12.ServiceA>(() => _i12.ServiceA());
     return this;
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:sharedexperiences/src/core/util/util/router_settings.dart';
+import 'package:sharedexperiences/src/pages/login/login_provider.dart';
 import 'package:sharedexperiences/src/widgets/custom_btn.dart';
 import 'package:sharedexperiences/src/widgets/custom_edittext.dart';
 
@@ -45,13 +48,16 @@ class LoginPage extends StatelessWidget {
                     children: [
                       const CustomEdittext('Correo:'),
                       const CustomEdittext('Contraseña:'),
-                      CustomBtn(
+                      context.watch<LoginProvider>().showLoading ? SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Lottie.asset('assets/loading.json'),
+                      ) : CustomBtn(
                         title: 'Ingresar',
                         rounded: true,
                         transparent: true,
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacementNamed(RoutersSettings.homeRoute);
+                          context.read<LoginProvider>().sendLogin("email", "password");
                         },
                       ),
                       const SizedBox(
@@ -59,8 +65,10 @@ class LoginPage extends StatelessWidget {
                       ),
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, RoutersSettings.recoverPassRouter);
+                            Navigator.of(context)
+                                .pushReplacementNamed(RoutersSettings.homeRoute);
+                            //Navigator.pushNamed(
+                            //    context, RoutersSettings.recoverPassRouter);
                           },
                           child: Text(
                             '¿Olvidaste tu contraseña?',
